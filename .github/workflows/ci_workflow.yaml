@@ -11,3 +11,5 @@ jobs:
         run: cargo fmt --check
       - name: Check code quality with clippy
         run: cargo clippy -- --deny warnings
+      - name: Run tests
+        run: cargo test
