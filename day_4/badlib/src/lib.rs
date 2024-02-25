@@ -50,5 +50,6 @@ mod tests {
     #[test]
     fn increase_coverage() {
         badly_formatted();
+        clippy_doesnt_like_this();
     }
 }
