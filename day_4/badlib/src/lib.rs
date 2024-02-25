@@ -46,4 +46,9 @@ mod tests {
         let result = add(5, 3);
         assert_eq!(result, 8);
     }
+
+    #[test]
+    fn increase_coverage() {
+        badly_formatted();
+    }
 }
