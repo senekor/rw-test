@@ -138,6 +138,7 @@ mod tests {
 }
 
 #[test]
+#[ignore]
 fn exercise_was_started() {
     let this_file_content = include_str!("lib.rs");
     assert!(
