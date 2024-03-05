@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["day_?/*"]
+members = ["day_?/*", "final_project/paekli-cli"]
 repository = "https://github.com/senekor/rw-test"
 
 # Config for 'cargo dist'
