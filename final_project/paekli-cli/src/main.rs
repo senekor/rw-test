@@ -19,10 +19,6 @@ const SEND_MESSAGE: &str = "\
 Thank you for trusting Paekli AG!
 We will deliver your paekli in mint condition.";
 
-const RECEIVE_MESSAGE: &str = "\
-There aren't any paekli for you at the moment.
-* tries to hide paekli on the storage shelf *";
-
 fn main() -> anyhow::Result<()> {
     let args = Cli::parse();
 
@@ -36,13 +32,25 @@ fn main() -> anyhow::Result<()> {
     match args.command {
         Command::Send { content } => {
             if std::fs::metadata(paekli_path).is_ok() {
-                anyhow::bail!("cannot send paekli, storage is full!");
+                anyhow::bail!("Cannot send paekli, storage is full.");
             }
             std::fs::write(storage_dir.join("content"), content)
                 .context("failed to store paekli")?;
             println!("{SEND_MESSAGE}");
         }
-        Command::Receive => println!("{RECEIVE_MESSAGE}"),
+        Command::Receive => match std::fs::read_to_string(&paekli_path) {
+            Ok(content) => {
+                std::fs::remove_file(paekli_path)
+                    .context("failed to remove received paekli from storage")?;
+                println!("Here is your paekli:\n{content}");
+            }
+            Err(e) => match e.kind() {
+                std::io::ErrorKind::NotFound => {
+                    anyhow::bail!("There is no paekli to receive.");
+                }
+                _ => return Err(e).context("failed to read from paekli storage"),
+            },
+        },
     }
 
     Ok(())
