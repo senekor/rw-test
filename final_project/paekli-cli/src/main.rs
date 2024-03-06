@@ -1,3 +1,8 @@
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
+
 use anyhow::Context;
 use clap::{Parser, Subcommand};
 
@@ -7,6 +12,8 @@ enum Command {
         content: String,
         #[arg(long("to"))]
         receiver: String,
+        #[arg(long)]
+        express: bool,
     },
     Receive {
         #[arg(long("for"))]
@@ -34,43 +41,39 @@ fn main() -> anyhow::Result<()> {
     let storage_dir = project_dir.data_dir();
 
     match args.command {
-        Command::Send { content, receiver } => {
-            let receiver_dir = storage_dir.join(receiver);
-            std::fs::create_dir_all(&receiver_dir)
-                .context("failed to create receiver directory")?;
+        Command::Send {
+            content,
+            receiver,
+            express,
+        } => {
+            let mut receiver_dir = storage_dir.join(receiver);
+            if express {
+                receiver_dir.push("express")
+            }
+            let receiver_dir = receiver_dir;
+
+            fs::create_dir_all(&receiver_dir).context("failed to create receiver directory")?;
 
             let time = time::OffsetDateTime::now_utc().to_string();
             let paekli_path = receiver_dir.join(time);
 
-            if std::fs::metadata(&paekli_path).is_ok() {
+            if fs::metadata(&paekli_path).is_ok() {
                 anyhow::bail!("Cannot send paekli, storage is full.");
             }
-            std::fs::write(paekli_path, content).context("failed to store paekli")?;
+            fs::write(paekli_path, content).context("failed to store paekli")?;
             println!("{SEND_MESSAGE}");
         }
         Command::Receive { receiver } => {
             let receiver_dir = storage_dir.join(&receiver);
+            let express_dir = receiver_dir.join("express");
 
-            let mut paekli: Vec<_> = std::fs::read_dir(&receiver_dir)
-                .into_iter()
-                .flatten()
-                .flatten()
-                .map(|e| e.file_name())
-                .collect();
-            paekli.sort();
-            let paekli_name = paekli
-                .into_iter()
-                .next()
-                .context(format!("There is no paekli for {}.", receiver))?
-                .into_string()
-                .ok()
-                .context("paekli name should be a utf-8 string")?;
+            let paekli_path = get_first_paekli_path_in_dir(&express_dir)
+                .or_else(|| get_first_paekli_path_in_dir(&receiver_dir))
+                .context(format!("There is no paekli for {}.", receiver))?;
 
-            let paekli_path = receiver_dir.join(paekli_name);
-
-            match std::fs::read_to_string(&paekli_path) {
+            match fs::read_to_string(&paekli_path) {
                 Ok(content) => {
-                    std::fs::remove_file(paekli_path)
+                    fs::remove_file(paekli_path)
                         .context("failed to remove received paekli from storage")?;
                     println!("Here is your paekli:\n{content}");
                 }
@@ -85,4 +88,21 @@ fn main() -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+fn get_first_paekli_path_in_dir(dir: &Path) -> Option<PathBuf> {
+    let mut paekli: Vec<_> = fs::read_dir(dir)
+        .into_iter()
+        .flatten()
+        .flatten()
+        .filter(|e| e.metadata().is_ok_and(|m| m.is_file()))
+        .map(|e| e.file_name())
+        .collect();
+    paekli.sort();
+    paekli
+        .into_iter()
+        .next()?
+        .into_string()
+        .ok()
+        .map(|name| dir.join(name))
 }
