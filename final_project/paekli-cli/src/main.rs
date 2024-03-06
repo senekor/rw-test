@@ -27,30 +27,48 @@ fn main() -> anyhow::Result<()> {
     let storage_dir = project_dir.data_dir();
     std::fs::create_dir_all(storage_dir).context("failed to create storage directory")?;
 
-    let paekli_path = storage_dir.join("content");
-
     match args.command {
         Command::Send { content } => {
-            if std::fs::metadata(paekli_path).is_ok() {
+            let time = time::OffsetDateTime::now_utc().to_string();
+            let paekli_path = storage_dir.join(time);
+
+            if std::fs::metadata(&paekli_path).is_ok() {
                 anyhow::bail!("Cannot send paekli, storage is full.");
             }
-            std::fs::write(storage_dir.join("content"), content)
-                .context("failed to store paekli")?;
+            std::fs::write(paekli_path, content).context("failed to store paekli")?;
             println!("{SEND_MESSAGE}");
         }
-        Command::Receive => match std::fs::read_to_string(&paekli_path) {
-            Ok(content) => {
-                std::fs::remove_file(paekli_path)
-                    .context("failed to remove received paekli from storage")?;
-                println!("Here is your paekli:\n{content}");
-            }
-            Err(e) => match e.kind() {
-                std::io::ErrorKind::NotFound => {
-                    anyhow::bail!("There is no paekli to receive.");
+        Command::Receive => {
+            let mut paekli: Vec<_> = std::fs::read_dir(storage_dir)
+                .context("failed to read from storage")?
+                .flatten()
+                .map(|e| e.file_name())
+                .collect();
+            paekli.sort();
+            let paekli_name = paekli
+                .into_iter()
+                .next()
+                .context("There is no paekli to receive.")?
+                .into_string()
+                .ok()
+                .context("paekli name should be a utf-8 string")?;
+
+            let paekli_path = storage_dir.join(paekli_name);
+
+            match std::fs::read_to_string(&paekli_path) {
+                Ok(content) => {
+                    std::fs::remove_file(paekli_path)
+                        .context("failed to remove received paekli from storage")?;
+                    println!("Here is your paekli:\n{content}");
                 }
-                _ => return Err(e).context("failed to read from paekli storage"),
-            },
-        },
+                Err(e) => match e.kind() {
+                    std::io::ErrorKind::NotFound => {
+                        anyhow::bail!("There is no paekli to receive.");
+                    }
+                    _ => return Err(e).context("failed to read from paekli storage"),
+                },
+            }
+        }
     }
 
     Ok(())

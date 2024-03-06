@@ -1,6 +1,6 @@
 [package]
 name = "paekli-cli"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -9,3 +9,4 @@ edition = "2021"
 anyhow = "1.0.80"
 clap = { version = "4.5.1", features = ["derive"] }
 directories = "5.0.1"
+time = "0.3.34"
