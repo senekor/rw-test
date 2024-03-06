@@ -16,7 +16,7 @@ struct Cli {
 }
 
 const SEND_MESSAGE: &str = "\
-Thank you for trusting Paekli AG!
+Thank you for trusting Paekli LLC!
 We will deliver your paekli in mint condition.";
 
 fn main() -> anyhow::Result<()> {
