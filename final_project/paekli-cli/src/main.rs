@@ -1,3 +1,4 @@
+use anyhow::Context;
 use clap::{Parser, Subcommand};
 
 #[derive(Subcommand)]
@@ -22,19 +23,27 @@ const RECEIVE_MESSAGE: &str = "\
 There aren't any paekli for you at the moment.
 * tries to hide paekli on the storage shelf *";
 
-fn main() {
+fn main() -> anyhow::Result<()> {
     let args = Cli::parse();
 
     let project_dir = directories::ProjectDirs::from("dev", "buenzli", "paekli")
-        .expect("the user's home directory seems to be corrupt");
+        .context("the user's home directory seems to be corrupt")?;
     let storage_dir = project_dir.data_dir();
-    std::fs::create_dir_all(storage_dir).expect("failed to create storage directory");
+    std::fs::create_dir_all(storage_dir).context("failed to create storage directory")?;
+
+    let paekli_path = storage_dir.join("content");
 
     match args.command {
         Command::Send { content } => {
-            std::fs::write(storage_dir.join("content"), content).expect("failed to store paekli");
+            if std::fs::metadata(paekli_path).is_ok() {
+                anyhow::bail!("cannot send paekli, storage is full!");
+            }
+            std::fs::write(storage_dir.join("content"), content)
+                .context("failed to store paekli")?;
             println!("{SEND_MESSAGE}");
         }
         Command::Receive => println!("{RECEIVE_MESSAGE}"),
     }
+
+    Ok(())
 }
