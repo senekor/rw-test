@@ -20,6 +20,8 @@ Thank you for trusting Paekli LLC!
 We will deliver your paekli in mint condition.";
 
 fn main() -> anyhow::Result<()> {
+    println!("Hello Silvia!");
+
     let args = Cli::parse();
 
     let project_dir = directories::ProjectDirs::from("dev", "buenzli", "paekli")
