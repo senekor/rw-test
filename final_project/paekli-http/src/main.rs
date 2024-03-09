@@ -1,23 +1,58 @@
-use std::sync::Mutex;
+use std::{
+    collections::{HashMap, VecDeque},
+    sync::Mutex,
+};
 
 use axum::{
     http::StatusCode,
     routing::{delete, post},
     Json,
 };
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
-static PAEKLI_STORE: Mutex<Option<String>> = Mutex::new(None);
+#[derive(Default)]
+struct Inbox {
+    regular: VecDeque<String>,
+    express: VecDeque<String>,
+}
+
+static PAEKLI_STORE: Lazy<Mutex<HashMap<String, Inbox>>> =
+    Lazy::new(|| Mutex::new(HashMap::default()));
 
 #[derive(Deserialize)]
 struct SendRequest {
     content: String,
+    receiver: Option<String>,
+    #[serde(default)]
+    express: bool,
+}
+
+/// The purpose of this "default" user is to allow interoperability with
+/// client components which haven't yet implemented the additional feature
+/// of individual receivers.
+static ANON: &str = "anon_anyone_can_send_and_receive";
+
+fn get_anon() -> String {
+    ANON.into()
 }
 
 #[axum::debug_handler]
 async fn send_paekli(Json(request): Json<SendRequest>) {
     let mut guard = PAEKLI_STORE.lock().unwrap();
-    *guard = Some(request.content);
+    let inbox = guard
+        .entry(request.receiver.unwrap_or_else(get_anon))
+        .or_default();
+    if request.express {
+        inbox.express.push_back(request.content);
+    } else {
+        inbox.regular.push_back(request.content);
+    }
+}
+
+#[derive(Debug, Deserialize)]
+struct ReceiveRequest {
+    receiver: String,
 }
 
 #[derive(Serialize)]
@@ -26,12 +61,21 @@ struct ReceiveResponse {
 }
 
 #[axum::debug_handler]
-async fn receive_paekli() -> Result<Json<ReceiveResponse>, StatusCode> {
+async fn receive_paekli(
+    request: Option<Json<ReceiveRequest>>,
+) -> Result<Json<ReceiveResponse>, StatusCode> {
     let mut guard = PAEKLI_STORE.lock().unwrap();
-    match guard.take() {
-        Some(content) => Ok(Json(ReceiveResponse { content })),
-        None => Err(StatusCode::NOT_FOUND),
+    let inbox = guard
+        .entry(request.map(|Json(r)| r.receiver).unwrap_or_else(get_anon))
+        .or_default();
+
+    if let Some(content) = inbox.express.pop_front() {
+        return Ok(Json(ReceiveResponse { content }));
     }
+    if let Some(content) = inbox.regular.pop_front() {
+        return Ok(Json(ReceiveResponse { content }));
+    }
+    Err(StatusCode::NOT_FOUND)
 }
 
 #[tokio::main]
