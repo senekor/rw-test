@@ -1,18 +1,37 @@
-use axum::routing::{delete, post};
+use std::sync::Mutex;
 
-#[axum::debug_handler]
-async fn send_paekli() -> &'static str {
-    "\
-Thank you for trusting Paekli LLC!
-We will deliver your paekli in mint condition.
-* throws your paekli directly in the trash *"
+use axum::{
+    http::StatusCode,
+    routing::{delete, post},
+    Json,
+};
+use serde::{Deserialize, Serialize};
+
+static PAEKLI_STORE: Mutex<Option<String>> = Mutex::new(None);
+
+#[derive(Deserialize)]
+struct SendRequest {
+    content: String,
 }
 
 #[axum::debug_handler]
-async fn receive_paekli() -> &'static str {
-    "\
-There aren't any paekli for you at the moment.
-* tries to hide paekli in the trash can *"
+async fn send_paekli(Json(request): Json<SendRequest>) {
+    let mut guard = PAEKLI_STORE.lock().unwrap();
+    *guard = Some(request.content);
+}
+
+#[derive(Serialize)]
+struct ReceiveResponse {
+    content: String,
+}
+
+#[axum::debug_handler]
+async fn receive_paekli() -> Result<Json<ReceiveResponse>, StatusCode> {
+    let mut guard = PAEKLI_STORE.lock().unwrap();
+    match guard.take() {
+        Some(content) => Ok(Json(ReceiveResponse { content })),
+        None => Err(StatusCode::NOT_FOUND),
+    }
 }
 
 #[tokio::main]
