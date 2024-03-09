@@ -45,8 +45,20 @@ async fn send_paekli(Json(request): Json<SendRequest>) {
         .or_default();
     if request.express {
         inbox.express.push_back(request.content);
+        if inbox.express.len() > 20 {
+            // prevent DoS attack at the cost of reliability
+            inbox.express.drain(..5);
+        }
     } else {
         inbox.regular.push_back(request.content);
+        if inbox.regular.len() > 20 {
+            // prevent DoS attack at the cost of reliability
+            inbox.regular.drain(..5);
+        }
+    }
+    if guard.len() > 100 {
+        // prevent DoS attack at the cost of reliability
+        guard.drain();
     }
 }
 
