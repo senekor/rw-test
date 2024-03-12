@@ -4,25 +4,29 @@ use leptos::*;
 fn main() {
     console_error_panic_hook::set_once();
 
-    let (get_content, set_content) = create_signal(String::default());
+    let (get_input, set_input) = create_signal(String::default());
+    let (get_paekli, set_paekli) = create_signal(String::default());
 
     mount_to_body(move || {
         view! {
             <h1>Hello WebAssembly!</h1>
             <button
-                on:click=move |_| alert(&format!("paekli with {} was sent!", get_content.get()))
+                on:click=move |_| {
+                    set_paekli.set(get_input.get());
+                    set_input.set(String::default());
+                }
             >
                 Send
             </button>
             <input
                 placeholder="paekli content"
-                prop:value=move || get_content.get()
-                on:input=move |e| set_content.set(event_target_value(&e))
+                prop:value=move || get_input.get()
+                on:input=move |e| set_input.set(event_target_value(&e))
             ></input>
             <button
                 on:click=move |_| {
-                    let content = get_content.get();
-                    set_content.set(String::default());
+                    let content = get_paekli.get();
+                    set_paekli.set(String::default());
                     if content.is_empty() {
                         alert("no paekli");
                     } else {
