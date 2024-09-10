@@ -15,19 +15,19 @@ Here's a checklist for this week's tasks:
   - [Instructions for Visual Studio Code][vscode-clippy]
   - [x] [`hello-clippy`](hello-clippy/src/lib.rs) contains linter warnings.
         Confirm that your editor shows them to you, then fix them.
-- [ ] Setup [rustlings]:
-  - [ ] run `cargo install rustlings`
-  - [ ] in the root of your repo, run `rustlings init`
+- [x] Setup [rustlings]:
+  - [x] run `cargo install rustlings`
+  - [x] in the root of your repo, run `rustlings init`
         This will create the `rustlings` folder containing all the exercises.
 - Solve rustlings exercises (run the command `rustlings` inside the `rustlings/` folder).
-  - [ ] intro
-  - [ ] variables
-  - [ ] if
-  - [ ] functions
-  - [ ] quiz 1
-  - [ ] primitive types
-  - [ ] vectors
-  - [ ] move semantics (== ownership)
+  - [x] intro
+  - [x] variables
+  - [x] if
+  - [x] functions
+  - [x] quiz 1
+  - [x] primitive types
+  - [x] vectors
+  - [x] move semantics (== ownership)
 
 ## Homework
 
