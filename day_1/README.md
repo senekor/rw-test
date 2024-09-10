@@ -4,16 +4,16 @@ Here's a checklist for this week's tasks:
 
 ## Practice
 
-- [ ] Create a repository from [the template][exercise-repo].
-- [ ] [Install the Rust toolchain][install-rust].
-- [ ] Setup your editor for Rust development.
+- [x] Create a repository from [the template][exercise-repo].
+- [x] [Install the Rust toolchain][install-rust].
+- [x] Setup your editor for Rust development.
       If you're using Visual Studio Code, simply install the recommended extensions.
       For other editors, make sure the following is working:
   - LSP ([rust-analyzer])
   - debugging support
-- [ ] Configure your LSP to use Rust's official linter, clippy.
+- [x] Configure your LSP to use Rust's official linter, clippy.
   - [Instructions for Visual Studio Code][vscode-clippy]
-  - [ ] [`hello-clippy`](hello-clippy/src/lib.rs) contains linter warnings.
+  - [x] [`hello-clippy`](hello-clippy/src/lib.rs) contains linter warnings.
         Confirm that your editor shows them to you, then fix them.
 - [ ] Setup [rustlings]:
   - [ ] run `cargo install rustlings`
