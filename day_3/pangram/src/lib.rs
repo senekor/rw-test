@@ -18,7 +18,9 @@
 // Whether a letter is contained could be a bool or a bit, and we need at least 26 of them.
 // Recall the rules of the exerice: non-ascii characters are ignored and case doesn't matter.
 //
-// TODO
+struct LetterSet {
+    set: [bool; 26],
+}
 
 // -------------------------------- STEP 2 --------------------------------
 //
@@ -30,7 +32,18 @@
 //
 // In our case, we only need to be able to collect from an iterator over `char`.
 //
-// TODO
+impl FromIterator<char> for LetterSet {
+    fn from_iter<T: IntoIterator<Item = char>>(iter: T) -> Self {
+        let mut letter_set = LetterSet { set: [false; 26] };
+        for item in iter {
+            if item.is_ascii_alphabetic() {
+                let idx = item.to_ascii_lowercase() as usize - 'a' as usize;
+                letter_set.set[idx] = true
+            }
+        }
+        letter_set
+    }
+}
 
 // -------------------------------- STEP 3 --------------------------------
 //
@@ -41,14 +54,30 @@
 //
 // Let's keep it simple here and implement Iterator directly on LetterSet.
 //
-// TODO
+impl Iterator for LetterSet {
+    type Item = char;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        for i in 0..26 {
+            if self.set[i] {
+                self.set[i] = false;
+                return Some((i as u8 + b'a') as char);
+            }
+        }
+        None
+    }
+}
 
 // -------------------------------- STEP 4 --------------------------------
 //
 // To solve the exercise, we need to know if all 26 letters are present in the set.
 // Give your LetterSet a method `is_full` for this purpose.
 //
-// TODO
+impl LetterSet {
+    fn is_full(&self) -> bool {
+        self.set.iter().all(|l| *l)
+    }
+}
 
 // -------------------------------- STEP 5 --------------------------------
 //
@@ -57,10 +86,9 @@
 // Construct a LetterSet from the sentence and determine if it's full.
 //
 pub fn is_pangram(sentence: &str) -> bool {
-    todo!("Is {sentence} a pangram?");
+    sentence.chars().collect::<LetterSet>().is_full()
 }
 
-#[cfg(deactivated)] // remove this line to activate the tests
 mod tests {
     #![allow(unused)]
 

@@ -11,7 +11,7 @@ Here's a checklist for this week's tasks:
   - [ ] lifetimes
   - [ ] tests (not covered in theory, but you can figure it out)
   - [ ] iterators
-- [ ] Implement your own iterator with the custom exercise `pangram`.
+- [x] Implement your own iterator with the custom exercise `pangram`.
       Make sure you got it right by running `cargo test` in the `pangram` directory.
 
 ## Homework
