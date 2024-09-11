@@ -7,12 +7,12 @@ Here's a checklist for this week's tasks:
 - Solve rustlings exercises.
   Watch out, one of the exercises for error handling requires something only covered next week.
   The solution is given below.
-  - [ ] structs
-  - [ ] enums
-  - [ ] strings
-  - [ ] modules
-  - [ ] hashmaps
-  - [ ] quiz 2
+  - [x] structs
+  - [x] enums
+  - [x] strings
+  - [x] modules
+  - [x] hashmaps
+  - [x] quiz 2
   - [ ] options
   - [ ] error_handling
     - In the exercise `errors5.rs`, the solution is `Box<dyn std::error::Error>>`.
