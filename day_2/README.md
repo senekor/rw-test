@@ -13,8 +13,8 @@ Here's a checklist for this week's tasks:
   - [x] modules
   - [x] hashmaps
   - [x] quiz 2
-  - [ ] options
-  - [ ] error_handling
+  - [x] options
+  - [x] error_handling
     - In the exercise `errors5.rs`, the solution is `Box<dyn std::error::Error>>`.
 - [x] Solve the custom exercise for `methods`.
       Make sure you got it right by running `cargo test` in the `day_2/methods` directory.
