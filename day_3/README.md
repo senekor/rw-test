@@ -5,12 +5,12 @@ Here's a checklist for this week's tasks:
 ## Practice
 
 - Solve rustlings exercises.
-  - [ ] generics
-  - [ ] traits
-  - [ ] quiz 3
-  - [ ] lifetimes
-  - [ ] tests (not covered in theory, but you can figure it out)
-  - [ ] iterators
+  - [x] generics
+  - [x] traits
+  - [x] quiz 3
+  - [x] lifetimes
+  - [x] tests (not covered in theory, but you can figure it out)
+  - [x] iterators
 - [x] Implement your own iterator with the custom exercise `pangram`.
       Make sure you got it right by running `cargo test` in the `pangram` directory.
 
