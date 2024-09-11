@@ -16,8 +16,8 @@ Here's a checklist for this week's tasks:
   - [ ] options
   - [ ] error_handling
     - In the exercise `errors5.rs`, the solution is `Box<dyn std::error::Error>>`.
-- [ ] Solve the custom exercise for `methods`.
-      Make sure you got it right by running `cargo test` in the `methods` directory.
+- [x] Solve the custom exercise for `methods`.
+      Make sure you got it right by running `cargo test` in the `day_2/methods` directory.
 
 ## Homework
 
