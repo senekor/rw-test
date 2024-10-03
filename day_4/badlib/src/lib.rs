@@ -5,10 +5,10 @@
 //! We will incrementally build a CI pipeline to discover
 //! how CI can help us make sure our Rust code is squeaky clean.
 
-pub fn badly_formatted        (
-) {
+pub fn badly_formatted() {
     println!("This code is badly formatted.");
-println!("Don't change it until CI fails because of it."); }
+    println!("Don't change it until CI fails because of it.");
+}
 
 pub fn clippy_doesnt_like_this() {
     if i32::MAX < i32::MIN {
