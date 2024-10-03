@@ -9,3 +9,5 @@ jobs:
       - uses: actions/checkout@v3 # <-- this line is new
       - name: Ensure standard formatting
         run: cargo fmt --check
+      - name: Check code quality with clippy
+        run: cargo clippy -- --deny warnings
