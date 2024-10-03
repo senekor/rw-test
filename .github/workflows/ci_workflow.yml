@@ -6,5 +6,6 @@ jobs:
     name: CI Job
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3 # <-- this line is new
       - name: Ensure standard formatting
         run: cargo fmt --check
