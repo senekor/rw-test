@@ -1,6 +1,9 @@
 [workspace]
 resolver = "2"
-members = ["day_?/*"]
+members = ["paekli-*"]
+
+[workspace.package]
+repository = "https://github.com/senekor/rw-test"
 
 # Config for 'cargo dist'
 [workspace.metadata.dist]
