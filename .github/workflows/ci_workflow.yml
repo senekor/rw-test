@@ -10,4 +10,4 @@ jobs:
       - name: Ensure standard formatting
         run: cargo fmt --check
       - name: Check code quality with clippy
-        run: cargo clippy -- --deny warnings
+        run: cargo clippy --package badlib -- --deny warnings
