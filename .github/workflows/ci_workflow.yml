@@ -1,0 +1,10 @@
+name: CI Workflow
+on: push
+
+jobs:
+  ci:
+    name: CI Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: My first CI step
+        run: echo "Hello CI! Let's hope I get a green checkmark."
