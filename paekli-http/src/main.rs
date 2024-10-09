@@ -121,7 +121,7 @@ async fn subscribe_to_notifications(
         while let Ok(recipient_2) = receiver.recv().await {
             if recipient_2 == recipient {
                 socket
-                    .send(axum::extract::ws::Message::Text("Hello, world!".into()))
+                    .send(axum::extract::ws::Message::Text("You've got mail!".into()))
                     .await
                     .unwrap();
             }
